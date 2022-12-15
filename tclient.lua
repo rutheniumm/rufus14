@@ -1,4 +1,6 @@
-NLS([[local tweenservice = game:GetService("TweenService")
+NLS([[
+
+local tweenservice = game:GetService("TweenService")
 local runservice = game:GetService("RunService")
 local players = game:GetService("Players")
 local uis = game:GetService("UserInputService")
@@ -302,8 +304,7 @@ tool.Equipped:Connect(function()
 	handlegui.Enabled = true
 	inputpressholder = uis.InputBegan:Connect(inputpressfunc)
 	inputreleaseholder = uis.InputEnded:Connect(inputreleasefunc)
-	renderfunc = runservice.RenderStepped:Connect(function(delta) --nightmare to read 
-		--crosshair
+	renderfunc = runservice.RenderStepped:Connect(function(delta) 
 		local absvel = charroot.CFrame:VectorToObjectSpace(charroot.Velocity)
 		local absx,absy,absz = math.clamp(absvel.x,-20,20), math.clamp(absvel.y,-50,50), math.clamp(absvel.z,-20,20)
 		local absmag = math.clamp(absvel.Magnitude,0,20)
@@ -315,12 +316,10 @@ tool.Equipped:Connect(function()
 		if cross.Rotation > 90 or cross.Rotation < -90 then
 			cross.Rotation = 0
 		end
-		--bars
 		for i,v in pairs(bartable) do
 			local baroffset = tfind(moveoncooldown, i) or 0
-			v.shadow.Position = UDim2.new(-0.014-((baroffset-1)/200),mpos.X,0,mpos.Y) --lua starting tables at first index once again
+			v.shadow.Position = UDim2.new(-0.014-((baroffset-1)/200),mpos.X,0,mpos.Y)
 		end	
-		--character lookat
 		if lookpart then
 			local lookatspeed = 15
 			local headpos = charroot.Position + (charroot.CFrame.UpVector*1.5)
@@ -333,7 +332,6 @@ tool.Equipped:Connect(function()
 				charroot.CFrame = charroot.CFrame:lerp(CFrame.new(charroot.Position, Vector3.new(aim.x,charroot.Position.y,aim.z)), (delta*lookatspeed))
 			end
 		end
-		--fps body
 		local unvisiblityvalue = 0
 		local camdistance = (camera.CFrame.Position - (charroot.Position + (charroot.CFrame.UpVector*1.5))).Magnitude
 		charhum.CameraOffset = Vector3.new()
@@ -348,7 +346,6 @@ tool.Equipped:Connect(function()
 				holdcf = holdcf * v
 			end
 			animcf = animcf:Lerp(holdcf, delta*5)
-			--
 			local objspace = chartorso.CFrame:ToObjectSpace(camera.CFrame * animcf) --the offset
 			local objX,objY,_ = objspace:ToOrientation()
 			local rcamX,_,_ = camera.CFrame:ToOrientation()
@@ -373,30 +370,6 @@ tool.Equipped:Connect(function()
 		ogdelta = ogdelta + delta
 		if ogdelta < 0.01666 then return end --throttled at roughly 60 fps incase of fps unlocker users
 		ogdelta = 0
-		camera.CFrame = camera.CFrame * CFrame.Angles(recvelX,recvelY,0):Inverse()
-		local camrotX,camrotY,_ = camera.CFrame:ToObjectSpace(lastcamcf):ToOrientation()
-		local recoilrotX,_,_ = recoilcf:ToOrientation()
-		local _,recoilrotY,recoilrotZ = recoilcf:ToEulerAnglesXYZ()
-		--\viewmodel spring\
-		camX = (camX + camrotX)
-		camY = (camY + camrotY)
-		--
-		modelvelX = getvel((camX - modeldestinationX), modelvelX, modelk, modelfriction)
-		modelvelY = getvel((camY - modeldestinationY), modelvelY, modelk, modelfriction)
-		--
-		modeldestinationX = (modeldestinationX + modelvelX)
-		modeldestinationY = (modeldestinationY + modelvelY)
-		--\recoil viewmodel\
-		recvelX = getvel((recoilrotX - recdestX), recvelX, reck, recfriction)
-		recvelY = getvel((recoilrotY - recdestY), recvelY, reck, recfriction)
-		recvelZ = getvel((recoilrotZ - recdestZ), recvelZ, reck, recfriction)
-		--
-		recdestX = (recdestX + recvelX)
-		recdestY = (recdestY + recvelY)
-		recdestZ = (recdestZ + recvelZ)
-		--
-		lastcamcf = camera.CFrame
-		camera.CFrame = camera.CFrame * CFrame.Angles(recvelX,recvelY,0)
 	end)
 	lookpart = character:WaitForChild("aimpartjudge")
 	animroot = charhead:WaitForChild("lrp")
@@ -437,4 +410,5 @@ remote.OnClientEvent:Connect(function(WHAT, ...)
 	if remotebehavior[WHAT] then
 		remotebehavior[WHAT](...)
 	end
-end)]], owner.Backpack:WaitForChild("Taurus Judge",10))
+end)
+]], owner.Backpack:WaitForChild("Taurus Judge", 10))
